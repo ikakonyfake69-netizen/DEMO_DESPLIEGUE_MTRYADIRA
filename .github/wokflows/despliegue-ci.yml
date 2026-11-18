@@ -1,0 +1,37 @@
+name: Comprobar script y prepar version 
+
+on:
+  push:
+  
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preparar:
+    runs-on: windows-lastest
+
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 21
+        uses: sivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage : none
+
+      - name: ejecutar script
+        shell: pwsh
+        run: ./desplegar.ps1 -RutaPHP 'php'
+      
+      - name: guardar version preparada
+        uses: action/upload-artifact@v4
+
+        with:
+          name: version-preparada
+          path: pruebas/index.php
+          if-no-files-found: error
